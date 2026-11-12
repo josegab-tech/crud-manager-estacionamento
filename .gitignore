@@ -1,0 +1,15 @@
+# Pastas de build e compilação
+build/
+target/
+bin/
+*.class
+
+# Arquivos e pastas do Eclipse IDE
+.settings/
+.metadata/
+.classpath
+.project
+
+# Arquivos do sistema operacional
+.DS_Store
+Thumbs.db
