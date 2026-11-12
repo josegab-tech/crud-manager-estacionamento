@@ -3,12 +3,13 @@ package model.dao;
 import java.util.List;
 
 import model.ModelException;
-import model.User;
+import model.Vehicle;
 
 public interface VehicleDAO {
-	boolean save(User user) throws ModelException ;
-	boolean update(User user) throws ModelException;
-	boolean delete(User user) throws ModelException;
-	List<User> listAll() throws ModelException;
-	User findById(int id) throws ModelException;
+	boolean save(Vehicle vehicle) throws ModelException ;
+	boolean update(Vehicle vehicle) throws ModelException;
+	boolean delete(Vehicle vehicle) throws ModelException;
+	List<Vehicle> listAll() throws ModelException;
+	Vehicle findById(int id) throws ModelException;
+
 }
