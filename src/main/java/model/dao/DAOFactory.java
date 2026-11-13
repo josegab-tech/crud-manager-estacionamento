@@ -13,6 +13,8 @@ public class DAOFactory {
 	static {
 		listDAOsInterfaces.put(PostDAO.class, new MySQLPostDAO());
 		listDAOsInterfaces.put(UserDAO.class, new MySQLUserDAO());
+		listDAOsInterfaces.put(VehicleDAO.class, new MySQLUserDAO());
+		listDAOsInterfaces.put(ParkingDAO.class, new MySQLUserDAO());
 	}
 
 	@SuppressWarnings("unchecked")
