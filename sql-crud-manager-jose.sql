@@ -25,3 +25,5 @@ create table if not exists parkings(
     primary key (id),
    CONSTRAINT fk_parking_vehicle FOREIGN KEY (vehicle_id) REFERENCES vehicles(id)
 );
+
+RENAME TABLE posts TO messages;
