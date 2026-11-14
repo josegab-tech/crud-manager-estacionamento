@@ -1,6 +1,4 @@
 use crud_manager;
-desc users;
-show TABLES;
 drop table if exists companies;
 
 create table if not EXISTS vehicles(

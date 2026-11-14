@@ -15,15 +15,16 @@ public class MySQLVehicleDAO implements VehicleDAO{
 		
 		DBHandler db = new DBHandler();
 		
-		String sqlInsert = "INSERT INTO vehicle VALUES"+
-							"(DEFAULT , ?, ? ,?, ?, ?, ?)";
+		String sqlInsert = "INSERT INTO vehicles VALUES"+
+							"(DEFAULT , ?, ? ,?, ?, ?)";
 		
 		db.prepareStatement(sqlInsert);
 		db.setString(1, vehicle.getPlate());
 		db.setString(2, vehicle.getModel());
-		db.setInt(2, vehicle.getManufactureYear());
-		db.setString(3, vehicle.getCategory());
-		db.setInt(4, vehicle.getUser().getId());
+		db.setInt(3, vehicle.getManufactureYear());
+		db.setString(4, vehicle.getCategory());
+		db.setInt(5, vehicle.getUser().getId());
+		
 		
 		return db.executeUpdate() > 0;
 	}
