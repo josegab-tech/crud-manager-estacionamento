@@ -18,6 +18,7 @@
 				<li><a href="${pageContext.request.contextPath}/users"><span class="glyphicon glyphicon-user" /><strong>&nbspUsuários</strong></a></li>
 				<li><a href="${pageContext.request.contextPath}/messages"><span class="glyphicon glyphicon-pencil" /><strong>&nbspAvisos/Mensagens</strong></a></li>
 				<li><a href="${pageContext.request.contextPath}/vehicles"><span class="glyphicon glyphicon-pencil" /><strong>&nbspVeículos</strong></a></li>
+				<li><a href="${pageContext.request.contextPath}/parkings"><span class="glyphicon glyphicon-pencil" /><strong>&nbspVagas</strong></a></li>
 				<li class="dropdown">
 			        <a class="dropdown-toggle" data-toggle="dropdown" href="#"><strong>Perfil</strong>
 			        <span class="caret"></span></a>

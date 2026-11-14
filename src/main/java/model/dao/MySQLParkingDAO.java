@@ -23,10 +23,21 @@ public class MySQLParkingDAO implements ParkingDAO {
 		
 		db.prepareStatement(sqlInsert);
 		db.setInt(1, parking.getSpotNumber());
-		db.setString(2, parking.getEntryTime().format(SQL_FORMATTER));
+		
+		if (parking.getEntryTime() != null) {
+			db.setString(2, parking.getEntryTime().format(SQL_FORMATTER));
+		} else {
+			db.setString(2, null);
+		}
+		
 		db.setString(3, parking.getHourlyRate().toString());
 		db.setInt(4, parking.isOccupied() ? 1 : 0);
-		db.setInt(5, parking.getVehicle().getId());
+		
+		if (parking.getVehicle() != null && parking.getVehicle().getId() > 0) {
+			db.setInt(5, parking.getVehicle().getId());
+		} else {
+			db.setString(5, null);
+		}
 		
 		return db.executeUpdate() > 0;
 	}
@@ -45,10 +56,22 @@ public class MySQLParkingDAO implements ParkingDAO {
 		
 		db.prepareStatement(sqlUpdate);
 		db.setInt(1, parking.getSpotNumber());
-		db.setString(2, parking.getEntryTime().format(SQL_FORMATTER));
+		
+		if (parking.getEntryTime() != null) {
+			db.setString(2, parking.getEntryTime().format(SQL_FORMATTER));
+		} else {
+			db.setString(2, null);
+		}
+		
 		db.setString(3, parking.getHourlyRate().toString());
 		db.setInt(4, parking.isOccupied() ? 1 : 0);
-		db.setInt(5, parking.getVehicle().getId());
+		
+		if (parking.getVehicle() != null && parking.getVehicle().getId() > 0) {
+			db.setInt(5, parking.getVehicle().getId());
+		} else {
+			db.setString(5, null);
+		}
+		
 		db.setInt(6, parking.getId());
 		
 		return db.executeUpdate() > 0;
@@ -72,7 +95,7 @@ public class MySQLParkingDAO implements ParkingDAO {
 		List<Parking> parkings = new ArrayList<Parking>();
 			
 		String sqlQuery = "SELECT p.* FROM parkings p "
-				        + "INNER JOIN vehicles v ON v.id = p.vehicle_id "
+				        + "LEFT JOIN vehicles v ON v.id = p.vehicle_id "
 				        + "ORDER BY p.spot_number;";
 		
 		db.createStatement();
@@ -110,14 +133,19 @@ public class MySQLParkingDAO implements ParkingDAO {
 		p.setSpotNumber(db.getInt("spot_number"));
 		
 		String rawDate = db.getString("entry_time");
-		p.setEntryTime(LocalDateTime.parse(rawDate, SQL_FORMATTER));
+		if (rawDate != null && !rawDate.isEmpty()) {
+			p.setEntryTime(LocalDateTime.parse(rawDate, SQL_FORMATTER));
+		}
 		
 		p.setHourlyRate(new BigDecimal(db.getString("hourly_rate")));
 		p.setOccupied(db.getInt("is_occupied") == 1);
 		
-		VehicleDAO vehicleDAO = DAOFactory.createDAO(VehicleDAO.class); 
-		Vehicle vehicle = vehicleDAO.findById(db.getInt("vehicle_id"));
-		p.setVehicle(vehicle);
+		int vehicleId = db.getInt("vehicle_id");
+		if (vehicleId > 0) {
+			VehicleDAO vehicleDAO = DAOFactory.createDAO(VehicleDAO.class); 
+			Vehicle vehicle = vehicleDAO.findById(vehicleId);
+			p.setVehicle(vehicle);
+		}
 		
 		return p;
 	}

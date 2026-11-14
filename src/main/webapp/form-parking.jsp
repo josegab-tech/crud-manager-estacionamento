@@ -26,11 +26,9 @@
 					</div>
 
 					<div class="form-group col-md-4">
-						<label for="entryTime">Data e Hora de Entrada</label>
+						<label for="entryTime">Data e Hora de Entrada (Opcional)</label>
 						<input type="datetime-local" class="form-control" id="entryTime" name="entryTime" 
-							   required oninvalid="this.setCustomValidity('Por favor, informe a data e hora de entrada.')"
-							   oninput="setCustomValidity('')"
-							   value="${parking.getEntryTime()}">
+		   							value="${parking.getEntryTime()}">
 					</div>
 
 					<div class="form-group col-md-4">
@@ -55,16 +53,14 @@
 					</div>
 
 					<div class="form-group col-md-6">
-						<label for="vehicle">Veículo</label>
-						<select id="vehicle" class="form-control selectpicker" name="vehicle" 
-							    required oninvalid="this.setCustomValidity('Por favor, selecione o veículo.')"
-							    oninput="setCustomValidity('')">
-						  <option value="" disabled ${not empty parking ? "" : "selected"}>Selecione um veículo</option>
-						  <c:forEach var="vehicle" items="${vehicles}">
-						  	<option value="${vehicle.getId()}" ${parking.getVehicle().getId() == vehicle.getId() ? "selected" : ""}>
-						  		${vehicle.getPlate()} - ${vehicle.getModel()}
-						  	</option>	
-						  </c:forEach>
+						<label for="vehicle">Veículo (Opcional)</label>
+						<select id="vehicle" class="form-control selectpicker" name="vehicle">
+	 						 <option value="" ${empty parking.getVehicle() ? "selected" : ""}>Nenhum veículo (Vaga livre)</option>
+	  						<c:forEach var="vehicle" items="${vehicles}">
+	  							<option value="${vehicle.getId()}" ${parking.getVehicle().getId() == vehicle.getId() ? "selected" : ""}>
+	  								${vehicle.getPlate()} - ${vehicle.getModel()}
+	  							</option>	
+	 						</c:forEach>
 						</select>
 					</div>
 				</div>
