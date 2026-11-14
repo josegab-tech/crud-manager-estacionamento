@@ -3,17 +3,17 @@ package model;
 import java.util.Calendar;
 import java.util.Date;
 
-public class Post {
+public class Message {
 	private int id;
 	private String content;
 	private Date postDate;
 	private User user;
 	
-	public Post() {
+	public Message() {
 		this(0);
 	}
 	
-	public Post(int id) {
+	public Message(int id) {
 		this.id = id;
 		setContent("");
 		setPostDate(Calendar.getInstance().getTime());

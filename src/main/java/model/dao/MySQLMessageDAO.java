@@ -4,70 +4,70 @@ import java.util.ArrayList;
 import java.util.List;
 
 import model.ModelException;
-import model.Post;
+import model.Message;
 import model.User;
 
-public class MySQLPostDAO implements PostDAO {
+public class MySQLMessageDAO implements MessageDAO {
 
 	@Override
-	public boolean save(Post post) throws ModelException {
+	public boolean save(Message message) throws ModelException {
 		
 		DBHandler db = new DBHandler();
 		
-		String sqlInsert = "INSERT INTO posts VALUES "
+		String sqlInsert = "INSERT INTO messages VALUES "
 				+ " (DEFAULT, ?, CURDATE(), ?);";
 		
 		db.prepareStatement(sqlInsert);
-		db.setString(1, post.getContent());
-		db.setInt(2, post.getUser().getId());
+		db.setString(1, message.getContent());
+		db.setInt(2, message.getUser().getId());
 		  
 		return db.executeUpdate() > 0;
 	}
 
 	@Override
-	public boolean update(Post post) throws ModelException {
+	public boolean update(Message message) throws ModelException {
 		
 		DBHandler db = new DBHandler();
 		
-		String sqlUpdate = "UPDATE posts "
+		String sqlUpdate = "UPDATE messages "
 						 + " SET content = ?,"
 						 + " user_id = ?"
 						 + " WHERE id = ?";
 		
 		db.prepareStatement(sqlUpdate);
 		
-		db.setString(1, post.getContent());
-		db.setInt(2, post.getUser().getId());
-		db.setInt(3, post.getId());
+		db.setString(1, message.getContent());
+		db.setInt(2, message.getUser().getId());
+		db.setInt(3, message.getId());
 		
 		return db.executeUpdate() > 0;
 	}
 
 	@Override
-	public boolean delete(Post post) throws ModelException {
+	public boolean delete(Message message) throws ModelException {
 		DBHandler db = new DBHandler();
 		
-		String sqlDelete = " DELETE FROM posts "
+		String sqlDelete = " DELETE FROM messages "
 		         + " WHERE id = ?;";
 
 		db.prepareStatement(sqlDelete);		
-		db.setInt(1, post.getId());
+		db.setInt(1, message.getId());
 		
 		return db.executeUpdate() > 0;
 	}
 
 	@Override
-	public List<Post> listAll() throws ModelException {
+	public List<Message> listAll() throws ModelException {
 	
 		DBHandler db = new DBHandler();
 		
-		List<Post> posts = new ArrayList<Post>();
+		List<Message> messages = new ArrayList<Message>();
 			
 		// Declara uma instrução SQL
 		String sqlQuery = " SELECT u.id AS user_id, p.*, "
 				        + " p.post_date "
 				        + " FROM users u "
-				        + " INNER JOIN posts p "
+				        + " INNER JOIN messages p "
 				        + " ON u.id = p.user_id "
 				        + " ORDER BY content";
 		
@@ -76,36 +76,36 @@ public class MySQLPostDAO implements PostDAO {
 		db.executeQuery(sqlQuery);
 
 		while (db.next()) {
-			Post p = createPost(db);
+			Message p = createMessage(db);
 			
-			posts.add(p);
+			messages.add(p);
 		}
 		
-		return posts;
+		return messages;
 	}
 
 	@Override
-	public Post findById(int id) throws ModelException {
+	public Message findById(int id) throws ModelException {
 		
 		DBHandler db = new DBHandler();
 				
-		String sql = "SELECT * FROM posts WHERE id = ?;";
+		String sql = "SELECT * FROM messages WHERE id = ?;";
 		
 		db.prepareStatement(sql);
 		db.setInt(1, id);
 		db.executeQuery();
 		
-		Post p = null;
+		Message p = null;
 		while (db.next()) {
-			p = createPost(db);
+			p = createMessage(db);
 			break;
 		}
 		
 		return p;
 	}
 	
-	private Post createPost(DBHandler db) throws ModelException {
-		Post p = new Post(db.getInt("id"));
+	private Message createMessage(DBHandler db) throws ModelException {
+		Message p = new Message(db.getInt("id"));
 		p.setContent(db.getString("content"));
 		p.setPostDate(db.getDate("post_date"));
 		
