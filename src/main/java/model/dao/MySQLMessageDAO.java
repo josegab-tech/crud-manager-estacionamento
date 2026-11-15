@@ -104,6 +104,44 @@ public class MySQLMessageDAO implements MessageDAO {
 		return p;
 	}
 	
+	@Override
+	public List<Message> listAll(int limit, int offset) throws ModelException {
+		DBHandler db = new DBHandler();
+		List<Message> messages = new ArrayList<Message>();
+
+		String sqlQuery = "SELECT m.* FROM messages m "
+						+ "INNER JOIN users u ON u.id = m.user_id "
+						+ "ORDER BY m.post_date DESC "
+						+ "LIMIT ? OFFSET ?;";
+
+		db.prepareStatement(sqlQuery);
+		db.setInt(1, limit);
+		db.setInt(2, offset);
+		db.executeQuery();
+
+		while (db.next()) {
+			Message m = createMessage(db);
+			messages.add(m);
+		}
+
+		return messages;
+	}
+
+	@Override
+	public int countAll() throws ModelException {
+		DBHandler db = new DBHandler();
+		String sqlQuery = "SELECT COUNT(*) AS total FROM messages;";
+
+		db.createStatement();
+		db.executeQuery(sqlQuery);
+
+		if (db.next()) {
+			return db.getInt("total");
+		}
+
+		return 0;
+	}
+	
 	private Message createMessage(DBHandler db) throws ModelException {
 		Message p = new Message(db.getInt("id"));
 		p.setContent(db.getString("content"));

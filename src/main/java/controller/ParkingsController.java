@@ -196,15 +196,37 @@ public class ParkingsController extends HttpServlet {
 	private void listParkings(HttpServletRequest req) {
 		ParkingDAO dao = DAOFactory.createDAO(ParkingDAO.class);
 
+		int page = 1;
+		String pageParam = req.getParameter("page");
+		if (pageParam != null && !pageParam.isEmpty()) {
+			try {
+				page = Integer.parseInt(pageParam);
+				if (page < 1) page = 1;
+			} catch (NumberFormatException e) {
+				page = 1;
+			}
+		}
+
+		int limit = 5;
+		int offset = (page - 1) * limit;
+
 		List<Parking> parkings = null;
+		int totalRecords = 0;
 		try {
-			parkings = dao.listAll();
+			parkings = dao.listAll(limit, offset);
+			totalRecords = dao.countAll();
 		} catch (ModelException e) {
 			e.printStackTrace();
 		}
 
-		if (parkings != null)
+		int totalPages = (int) Math.ceil((double) totalRecords / limit);
+		if (totalPages < 1) totalPages = 1;
+
+		if (parkings != null) {
 			req.setAttribute("parkings", parkings);
+			req.setAttribute("currentPage", page);
+			req.setAttribute("totalPages", totalPages);
+		}
 	}
 
 	private void listVehicles(HttpServletRequest req) {

@@ -164,15 +164,37 @@ public class MessagesController extends HttpServlet {
 
 	private void listMessages(HttpServletRequest req) {
 		MessageDAO dao = DAOFactory.createDAO(MessageDAO.class);
-		
+
+		int page = 1;
+		String pageParam = req.getParameter("page");
+		if (pageParam != null && !pageParam.isEmpty()) {
+			try {
+				page = Integer.parseInt(pageParam);
+				if (page < 1) page = 1;
+			} catch (NumberFormatException e) {
+				page = 1;
+			}
+		}
+
+		int limit = 5;
+		int offset = (page - 1) * limit;
+
 		List<Message> messages = null;
+		int totalRecords = 0;
 		try {
-			messages = dao.listAll();
+			messages = dao.listAll(limit, offset);
+			totalRecords = dao.countAll();
 		} catch (ModelException e) {
 			e.printStackTrace();
 		}
-		
-		if (messages != null)
+
+		int totalPages = (int) Math.ceil((double) totalRecords / limit);
+		if (totalPages < 1) totalPages = 1;
+
+		if (messages != null) {
 			req.setAttribute("messages", messages);
+			req.setAttribute("currentPage", page);
+			req.setAttribute("totalPages", totalPages);
+		}
 	}
 }

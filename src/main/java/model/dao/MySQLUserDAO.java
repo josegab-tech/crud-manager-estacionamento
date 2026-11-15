@@ -113,6 +113,43 @@ public class MySQLUserDAO implements UserDAO {
 		return u;
 	}
 	
+	@Override
+	public List<User> listAll(int limit, int offset) throws ModelException {
+		DBHandler db = new DBHandler();
+		List<User> users = new ArrayList<User>();
+
+		String sqlQuery = "SELECT * FROM users ORDER BY nome LIMIT ? OFFSET ?;";
+
+		db.prepareStatement(sqlQuery);
+		db.setInt(1, limit);
+		db.setInt(2, offset);
+		db.executeQuery();
+
+		while (db.next()) {
+			User u = createUser(db);
+			users.add(u);
+		}
+
+		return users;
+	}
+
+	@Override
+	public int countAll() throws ModelException {
+		DBHandler db = new DBHandler();
+		String sqlQuery = "SELECT COUNT(*) AS total FROM users;";
+
+		db.createStatement();
+		db.executeQuery(sqlQuery);
+
+		if (db.next()) {
+			return db.getInt("total");
+		}
+
+		return 0;
+	}
+	
+	
+	
 	private User createUser(DBHandler db) throws ModelException {
 		User u = new User(db.getInt("id"));
 		u.setName(db.getString("nome"));

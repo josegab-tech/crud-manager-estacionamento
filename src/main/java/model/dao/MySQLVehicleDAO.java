@@ -103,6 +103,44 @@ public class MySQLVehicleDAO implements VehicleDAO{
 		return v;
 	}
 	
+	@Override
+	public List<Vehicle> listAll(int limit, int offset) throws ModelException {
+		DBHandler db = new DBHandler();
+		List<Vehicle> vehicles = new ArrayList<Vehicle>();
+
+		String sqlQuery = "SELECT v.* FROM vehicles v "
+						+ "INNER JOIN users u ON u.id = v.user_id "
+						+ "ORDER BY v.plate "
+						+ "LIMIT ? OFFSET ?;";
+
+		db.prepareStatement(sqlQuery);
+		db.setInt(1, limit);
+		db.setInt(2, offset);
+		db.executeQuery();
+
+		while (db.next()) {
+			Vehicle v = createVehicle(db);
+			vehicles.add(v);
+		}
+
+		return vehicles;
+	}
+
+	@Override
+	public int countAll() throws ModelException {
+		DBHandler db = new DBHandler();
+		String sqlQuery = "SELECT COUNT(*) AS total FROM vehicles;";
+
+		db.createStatement();
+		db.executeQuery(sqlQuery);
+
+		if (db.next()) {
+			return db.getInt("total");
+		}
+
+		return 0;
+	}
+	
 	private Vehicle createVehicle(DBHandler db) throws ModelException {
 		Vehicle v = new Vehicle(db.getInt("id"));
 		v.setPlate(db.getString("plate"));

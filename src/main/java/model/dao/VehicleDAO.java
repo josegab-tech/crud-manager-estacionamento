@@ -10,6 +10,8 @@ public interface VehicleDAO {
 	boolean update(Vehicle vehicle) throws ModelException;
 	boolean delete(Vehicle vehicle) throws ModelException;
 	List<Vehicle> listAll() throws ModelException;
+	List<Vehicle> listAll(int limit, int offset) throws ModelException;
+	int countAll() throws ModelException;
 	Vehicle findById(int id) throws ModelException;
 
 }

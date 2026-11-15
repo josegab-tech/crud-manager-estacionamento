@@ -102,17 +102,38 @@ public class UsersController extends HttpServlet {
 	
 	private void listUsers(HttpServletRequest req) {
 		UserDAO dao = DAOFactory.createDAO(UserDAO.class);
-		
+
+		int page = 1;
+		String pageParam = req.getParameter("page");
+		if (pageParam != null && !pageParam.isEmpty()) {
+			try {
+				page = Integer.parseInt(pageParam);
+				if (page < 1) page = 1;
+			} catch (NumberFormatException e) {
+				page = 1;
+			}
+		}
+
+		int limit = 5;
+		int offset = (page - 1) * limit;
+
 		List<User> users = null;
+		int totalRecords = 0;
 		try {
-			users = dao.listAll();
+			users = dao.listAll(limit, offset);
+			totalRecords = dao.countAll();
 		} catch (ModelException e) {
-			// Log no servidor
 			e.printStackTrace();
 		}
-		
-		if (users != null)
+
+		int totalPages = (int) Math.ceil((double) totalRecords / limit);
+		if (totalPages < 1) totalPages = 1;
+
+		if (users != null) {
 			req.setAttribute("users", users);
+			req.setAttribute("currentPage", page);
+			req.setAttribute("totalPages", totalPages);
+		}
 	}
 	
 	private void insertUser(HttpServletRequest req, HttpServletResponse resp) {

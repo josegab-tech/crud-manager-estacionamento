@@ -175,14 +175,36 @@ public class VehiclesController extends HttpServlet {
 	private void listVehicles(HttpServletRequest req) {
 		VehicleDAO dao = DAOFactory.createDAO(VehicleDAO.class);
 
+		int page = 1;
+		String pageParam = req.getParameter("page");
+		if (pageParam != null && !pageParam.isEmpty()) {
+			try {
+				page = Integer.parseInt(pageParam);
+				if (page < 1) page = 1;
+			} catch (NumberFormatException e) {
+				page = 1;
+			}
+		}
+
+		int limit = 5;
+		int offset = (page - 1) * limit;
+
 		List<Vehicle> vehicles = null;
+		int totalRecords = 0;
 		try {
-			vehicles = dao.listAll();
+			vehicles = dao.listAll(limit, offset);
+			totalRecords = dao.countAll();
 		} catch (ModelException e) {
 			e.printStackTrace();
 		}
 
-		if (vehicles != null)
+		int totalPages = (int) Math.ceil((double) totalRecords / limit);
+		if (totalPages < 1) totalPages = 1;
+
+		if (vehicles != null) {
 			req.setAttribute("vehicles", vehicles);
+			req.setAttribute("currentPage", page);
+			req.setAttribute("totalPages", totalPages);
+		}
 	}
 }

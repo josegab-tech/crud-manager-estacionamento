@@ -80,12 +80,20 @@
 	     	<div id="bottom" class="row">
 	     		<div class="col-md-12">
 			        <ul class="pagination">
-			            <li class="disabled"><a>&lt; Anterior</a></li>
-			            <li class="disabled"><a>1</a></li>
-			            <li><a href="#">2</a></li>
-			            <li><a href="#">3</a></li>
-			            <li class="next"><a href="#" rel="next">Próximo &gt;</a></li>
-			        </ul><!-- /.pagination -->
+			            <li class="${currentPage == 1 ? 'disabled' : ''}">
+			            	<a href="${currentPage == 1 ? '#' : pageContext.request.contextPath.concat('/users?page=').concat(currentPage - 1)}">&lt; Anterior</a>
+			            </li>
+			            
+			            <c:forEach begin="1" end="${totalPages}" var="i">
+			            	<li class="${currentPage == i ? 'active' : ''}">
+			            		<a href="${pageContext.request.contextPath}/users?page=${i}">${i}</a>
+			            	</li>
+			            </c:forEach>
+			            
+			            <li class="${currentPage >= totalPages ? 'disabled' : ''}">
+			            	<a href="${currentPage >= totalPages ? '#' : pageContext.request.contextPath.concat('/users?page=').concat(currentPage + 1)}">Próximo &gt;</a>
+			            </li>
+			        </ul>
 			    </div>
 	     	</div>
 		</div>

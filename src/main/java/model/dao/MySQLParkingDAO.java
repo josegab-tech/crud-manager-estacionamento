@@ -128,6 +128,44 @@ public class MySQLParkingDAO implements ParkingDAO {
 		return p;
 	}
 	
+	@Override
+	public List<Parking> listAll(int limit, int offset) throws ModelException {
+		DBHandler db = new DBHandler();
+		List<Parking> parkings = new ArrayList<Parking>();
+
+		String sqlQuery = "SELECT p.* FROM parkings p "
+						+ "LEFT JOIN vehicles v ON v.id = p.vehicle_id "
+						+ "ORDER BY p.spot_number "
+						+ "LIMIT ? OFFSET ?;";
+
+		db.prepareStatement(sqlQuery);
+		db.setInt(1, limit);
+		db.setInt(2, offset);
+		db.executeQuery();
+
+		while (db.next()) {
+			Parking p = createParking(db);
+			parkings.add(p);
+		}
+
+		return parkings;
+	}
+
+	@Override
+	public int countAll() throws ModelException {
+		DBHandler db = new DBHandler();
+		String sqlQuery = "SELECT COUNT(*) AS total FROM parkings;";
+
+		db.createStatement();
+		db.executeQuery(sqlQuery);
+
+		if (db.next()) {
+			return db.getInt("total");
+		}
+
+		return 0;
+	}
+	
 	private Parking createParking(DBHandler db) throws ModelException {
 		Parking p = new Parking(db.getInt("id"));
 		p.setSpotNumber(db.getInt("spot_number"));
