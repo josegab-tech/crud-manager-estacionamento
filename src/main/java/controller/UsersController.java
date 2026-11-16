@@ -1,6 +1,7 @@
 package controller;
 
 import java.io.IOException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 import jakarta.servlet.ServletException;
@@ -9,11 +10,10 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.ModelException;
+import model.PasswordEncryptor;
 import model.User;
 import model.dao.DAOFactory;
 import model.dao.UserDAO;
-
-import java.sql.SQLIntegrityConstraintViolationException;
 
 @WebServlet(urlPatterns = {"/users", "/user/form", "/user/delete", "/user/insert", "/user/update"})
 public class UsersController extends HttpServlet {
@@ -140,24 +140,23 @@ public class UsersController extends HttpServlet {
 		String userName = req.getParameter("name");
 		String userGender = req.getParameter("gender");
 		String userEMail = req.getParameter("mail");
+		String userPassword = req.getParameter("password");
 		
 		User user = new User();
 		user.setName(userName);
 		user.setGender(userGender);
 		user.setEmail(userEMail);
+		user.setPassword(PasswordEncryptor.encrypt(userPassword));
 		
 		UserDAO dao = DAOFactory.createDAO(UserDAO.class);
 		
 		try {
 			if (dao.save(user)) {
 				ControllerUtil.sucessMessage(req, "Usuário '" + user.getName() + "' salvo com sucesso.");
-			}
-			else {
+			} else {
 				ControllerUtil.errorMessage(req, "Usuário '" + user.getName() + "' não pode ser salvo.");
 			}
-				
 		} catch (ModelException e) {
-			// log no servidor
 			e.printStackTrace();
 			ControllerUtil.errorMessage(req, e.getMessage());
 		}
@@ -167,24 +166,28 @@ public class UsersController extends HttpServlet {
 		String userName = req.getParameter("name");
 		String userGender = req.getParameter("gender");
 		String userEMail = req.getParameter("mail");
+		String userPassword = req.getParameter("password");
 		
 		User user = loadUser(req);
 		user.setName(userName);
 		user.setGender(userGender);
 		user.setEmail(userEMail);
 		
+		if (userPassword != null && !userPassword.isEmpty()) {
+			user.setPassword(PasswordEncryptor.encrypt(userPassword));
+		} else {
+			user.setPassword(null);
+		}
+		
 		UserDAO dao = DAOFactory.createDAO(UserDAO.class);
 		
 		try {
 			if (dao.update(user)) {
 				ControllerUtil.sucessMessage(req, "Usuário '" + user.getName() + "' atualizado com sucesso.");
-			}
-			else {
+			} else {
 				ControllerUtil.errorMessage(req, "Usuário '" + user.getName() + "' não pode ser atualizado.");
 			}
-				
 		} catch (ModelException e) {
-			// log no servidor
 			e.printStackTrace();
 			ControllerUtil.errorMessage(req, e.getMessage());
 		}

@@ -35,14 +35,24 @@
 					</div>
 					
 					<div class="form-group col-md-4">
-					<label for="mail">E-mail</label>
+						<label for="mail">E-mail</label>
 						<input type="email" class="form-control" id="mail" name="mail" 
-							   autofocus="autofocus" placeholder="E-mail do usuário" 
+							   placeholder="E-mail do usuário" 
 							   required oninvalid="this.setCustomValidity('Por favor, informe o email do usuário.')"
 							   oninput="setCustomValidity('')"
 							   value="${user.getEmail()}">
 					</div>
 				</div>
+
+				<div class="row">
+					<div class="form-group col-md-4">
+						<label for="password">Senha</label>
+						<input type="password" class="form-control" id="password" name="password" 
+							   placeholder="${not empty user ? 'Deixe em branco para manter a atual' : 'Senha do usuário'}"
+							   ${empty user ? 'required oninvalid="this.setCustomValidity(\'Por favor, informe a senha do usuário.\')" oninput="setCustomValidity(\'\')"' : ''}>
+					</div>
+				</div>
+				
 				<hr />
 				<div id="actions" class="row pull-right">
 					<div class="col-md-12">

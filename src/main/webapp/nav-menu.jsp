@@ -20,11 +20,13 @@
 				<li><a href="${pageContext.request.contextPath}/vehicles"><span class="glyphicon glyphicon-road" /><strong>&nbspVeículos</strong></a></li>
 				<li><a href="${pageContext.request.contextPath}/parkings"><span class="glyphicon glyphicon-map-marker" /><strong>&nbspVagas</strong></a></li>
 				<li class="dropdown">
-			        <a class="dropdown-toggle" data-toggle="dropdown" href="#"><strong>Perfil</strong>
-			        <span class="caret"></span></a>
+			        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+			        	<strong>${not empty usuarioLogado ? usuarioLogado.getName() : 'Perfil'}</strong>
+			        	<span class="caret"></span>
+			        </a>
 			        <ul class="dropdown-menu">
-			          <li><a href="#"><span class="glyphicon glyphicon-cog" /></span>&nbspDados cadastrais</a></li>
-			          <li><a href="#"><span class="glyphicon glyphicon-log-out" /></span>&nbspSair</a></li>
+			          <li><a href="${pageContext.request.contextPath}/user/update?userId=${usuarioLogado.getId()}"><span class="glyphicon glyphicon-cog"></span>&nbsp;Dados cadastrais</a></li>
+			          <li><a href="${pageContext.request.contextPath}/logout"><span class="glyphicon glyphicon-log-out"></span>&nbsp;Sair</a></li>
 			        </ul>
 			    </li>
 			</ul>

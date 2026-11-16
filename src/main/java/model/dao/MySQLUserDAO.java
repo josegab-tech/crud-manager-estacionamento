@@ -11,38 +11,41 @@ public class MySQLUserDAO implements UserDAO {
 
 	@Override
 	public boolean save(User user) throws ModelException {
-		
 		DBHandler db = new DBHandler();
 		
 		String sqlInsert = "INSERT INTO users VALUES "
-				+ " (DEFAULT, ?, ?, ?);";
+				+ " (DEFAULT, ?, ?, ?, ?);";
 		
 		db.prepareStatement(sqlInsert);
 		db.setString(1, user.getName());
 		db.setString(2, user.getGender());
 		db.setString(3, user.getEmail());
+		db.setString(4, user.getPassword());
 		  
 		return db.executeUpdate() > 0;
 	}
 
 	@Override
 	public boolean update(User user) throws ModelException {
-		
 		DBHandler db = new DBHandler();
 		
-		String sqlUpdate = "UPDATE users "
-				         	+ "SET nome = ?, "
-				         	+ "sexo = ?, "
-				         	+ "email = ? "
-				         + "WHERE id = ?";
+		boolean hasNewPassword = user.getPassword() != null && !user.getPassword().isEmpty();
 		
+		String sqlUpdate = hasNewPassword
+				? "UPDATE users SET nome = ?, sexo = ?, email = ?, password = ? WHERE id = ?"
+				: "UPDATE users SET nome = ?, sexo = ?, email = ? WHERE id = ?";
 		
 		db.prepareStatement(sqlUpdate);
-		
 		db.setString(1, user.getName());
 		db.setString(2, user.getGender());
 		db.setString(3, user.getEmail());
-		db.setInt(4, user.getId());
+		
+		if (hasNewPassword) {
+			db.setString(4, user.getPassword());
+			db.setInt(5, user.getId());
+		} else {
+			db.setInt(4, user.getId());
+		}
 		
 		return db.executeUpdate() > 0;
 	}
@@ -114,6 +117,24 @@ public class MySQLUserDAO implements UserDAO {
 	}
 	
 	@Override
+	public User findByEmail(String email) throws ModelException {
+		DBHandler db = new DBHandler();
+		String sql = "SELECT * FROM users WHERE email = ?;";
+		
+		db.prepareStatement(sql);
+		db.setString(1, email);
+		db.executeQuery();
+		
+		User u = null;
+		while (db.next()) {
+			u = createUser(db);
+			break;
+		}
+		
+		return u;
+	}
+	
+	@Override
 	public List<User> listAll(int limit, int offset) throws ModelException {
 		DBHandler db = new DBHandler();
 		List<User> users = new ArrayList<User>();
@@ -155,6 +176,7 @@ public class MySQLUserDAO implements UserDAO {
 		u.setName(db.getString("nome"));
 		u.setGender(db.getString("sexo"));
 		u.setEmail(db.getString("email"));
+		u.setPassword(db.getString("password"));
 		
 		return u;
 	}
