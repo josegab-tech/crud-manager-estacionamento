@@ -116,6 +116,12 @@
 		            $("#id").attr( "value", userId);
 		            $("#form").attr( "action","user/delete");
 		        })
+		        $("#search").on("keyup", function() {
+			        var value = $(this).val().toLowerCase();
+			        $("table tbody tr").filter(function() {
+			            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+			        });
+			    });
 			});
 		</script>
 	</body>

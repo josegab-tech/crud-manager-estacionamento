@@ -119,6 +119,12 @@
 		        $("#id").val(parkingId);
 		        $("#form").attr("action", "${pageContext.request.contextPath}/parking/delete");
 		    });
+		    $("#search").on("keyup", function() {
+		        var value = $(this).val().toLowerCase();
+		        $("table tbody tr").filter(function() {
+		            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+		        });
+		    });
 		});
 		</script>
 	</body>
